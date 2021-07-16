@@ -12,7 +12,7 @@ namespace neo.Benchmark.benchmark
 {
     public class BM_Instruction
     {
-        private readonly bool a = false;
+        private readonly bool a = true;
         private readonly bool b = false;
 
 
@@ -24,11 +24,19 @@ namespace neo.Benchmark.benchmark
 
 
         [Benchmark]
-        public bool Instruction_BOOLAND_And() =>a && b;
+        public bool Instruction_BOOLAND() => a && b;
 
 
         [Benchmark]
-        public bool Instruction_BOOLAND_Bit_And() => a & b;
+        public bool Instruction_BOOLAND_Bit() => a & b;
+
+        [Benchmark]
+        public bool Instruction_BOOLOR() => a || b;
+
+
+        [Benchmark]
+        public bool Instruction_BOOLOR_Bit() => a | b;
+
 
 
     }

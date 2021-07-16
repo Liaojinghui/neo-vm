@@ -187,5 +187,14 @@ namespace Neo.Test
             Assert.IsTrue(stack.Pop<Integer>().Equals(1));
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Pop<Integer>().Equals(0));
         }
+
+        [TestMethod]
+        public void TestBit()
+        {
+            var a = true;
+            var b = true;
+            Assert.AreEqual(a& b, a && b);
+            Assert.AreEqual(a | b, a || b);
+        }
     }
 }
