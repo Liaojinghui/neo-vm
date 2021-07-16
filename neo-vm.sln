@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{210DA31B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "neo-vm.Tests", "tests\neo-vm.Tests\neo-vm.Tests.csproj", "{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "benchmark", "benchmark", "{D6A2EFFC-FD02-4FC8-AB2F-6C5857861D9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "neo.Benchmark", "benchmark\neo.Benchmark\neo.Benchmark.csproj", "{0E107963-9C01-439B-882E-6EBF64B17DAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +28,10 @@ Global
 		{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E107963-9C01-439B-882E-6EBF64B17DAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E107963-9C01-439B-882E-6EBF64B17DAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E107963-9C01-439B-882E-6EBF64B17DAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E107963-9C01-439B-882E-6EBF64B17DAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -31,6 +39,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{6A621185-36A9-4E1A-8D3D-462D19503E32} = {0F08E36C-9F18-423D-8F8C-C8C2FACF00F7}
 		{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC} = {210DA31B-019E-48CE-9498-D56A7987C4E6}
+		{0E107963-9C01-439B-882E-6EBF64B17DAC} = {D6A2EFFC-FD02-4FC8-AB2F-6C5857861D9A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F8AC7AA8-85DE-4A98-9B58-BA08AB813C99}

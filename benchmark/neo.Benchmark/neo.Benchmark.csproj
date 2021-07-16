@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>neo.Benchmark</RootNamespace>
+    <!-- <AssemblyName>neo.Benchmark</AssemblyName> -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateProgramFile>false</GenerateProgramFile>
+    <IsPackable>false</IsPackable>
+    <ProjectGuid>{0E107963-9C01-439B-882E-6EBF64B17DAC}</ProjectGuid>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Akka.TestKit" Version="1.4.20" />
+    <PackageReference Include="Akka.TestKit.Xunit2" Version="1.4.20" />
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+    <PackageReference Include="Moq" Version="4.16.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\neo-vm\neo-vm.csproj" />
+  </ItemGroup>
+
+  <!-- <ItemGroup>
+    <None Update="Tests\**\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup> -->
+
+  <ItemGroup>
+    <None Remove="benchmark\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="benchmark\" />
+  </ItemGroup>
+</Project>
