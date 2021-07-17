@@ -10,12 +10,12 @@ namespace Neo.VM
     /// <summary>
     /// Represents the evaluation stack in the VM.
     /// </summary>
-    public sealed class EvaluationStack : IReadOnlyList<StackItem>
+    public class EvaluationStack : IReadOnlyList<StackItem>
     {
         private readonly List<StackItem> innerList = new();
         private readonly ReferenceCounter referenceCounter;
 
-        internal EvaluationStack(ReferenceCounter referenceCounter)
+        public EvaluationStack(ReferenceCounter referenceCounter)
         {
             this.referenceCounter = referenceCounter;
         }
@@ -135,12 +135,12 @@ namespace Neo.VM
         {
             if (index >= innerList.Count)
                 throw new ArgumentOutOfRangeException(nameof(index));
-            if (index < 0)
-            {
-                index += innerList.Count;
-                if (index < 0)
-                    throw new ArgumentOutOfRangeException(nameof(index));
-            }
+            //if (index < 0)
+            //{
+            //    index += innerList.Count;
+            //    if (index < 0)
+            //        throw new ArgumentOutOfRangeException(nameof(index));
+            //}
             index = innerList.Count - index - 1;
             if (innerList[index] is not T item)
                 throw new InvalidCastException($"The item can't be casted to type {typeof(T)}");

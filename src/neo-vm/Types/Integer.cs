@@ -20,7 +20,7 @@ namespace Neo.VM.Types
         /// Represents the number 0.
         /// </summary>
         public static readonly Integer Zero = 0;
-        private readonly BigInteger value;
+        private BigInteger value;
 
         internal override ReadOnlyMemory<byte> Memory => value.IsZero ? ReadOnlyMemory<byte>.Empty : value.ToByteArray();
         public override int Size { get; }
@@ -42,6 +42,12 @@ namespace Neo.VM.Types
                 if (Size > MaxSize) throw new ArgumentException($"MaxSize exceed: {Size}");
             }
             this.value = value;
+        }
+
+        public BigInteger Value
+        {
+            get { return this.value; }   // get method
+            set { this.value = value; }  // set method
         }
 
         public override bool Equals(StackItem? other)

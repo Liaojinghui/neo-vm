@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using Array = System.Array;
 using Buffer = Neo.VM.Types.Buffer;
 using VMArray = Neo.VM.Types.Array;
-
+using Neo.VM.ObjectPool;
 namespace Neo.VM
 {
     /// <summary>
@@ -17,6 +17,7 @@ namespace Neo.VM
     {
         private VMState state = VMState.BREAK;
         private bool isJumping = false;
+        //private ObjectPool<Integer> pool = new ObjectPool<Integer>(()=>new Integer(0));
 
         /// <summary>
         /// Restrictions on the VM.
@@ -125,6 +126,8 @@ namespace Neo.VM
         /// <returns></returns>
         public virtual VMState Execute()
         {
+            //pool.Allocate(10);
+
             if (State == VMState.BREAK)
                 State = VMState.NONE;
             while (State != VMState.HALT && State != VMState.FAULT)
@@ -151,7 +154,10 @@ namespace Neo.VM
                 case OpCode.PUSHINT128:
                 case OpCode.PUSHINT256:
                     {
+                        //var a = pool.Dequeue();
+                        //a.Value = ;
                         Push(new BigInteger(instruction.Operand.Span));
+
                         break;
                     }
                 case OpCode.PUSHA:
@@ -194,6 +200,8 @@ namespace Neo.VM
                 case OpCode.PUSH15:
                 case OpCode.PUSH16:
                     {
+                        //var a = pool.Dequeue();
+                        //a.Value = ;
                         Push((int)instruction.OpCode - (int)OpCode.PUSH0);
                         break;
                     }
@@ -435,6 +443,8 @@ namespace Neo.VM
                 // Stack ops
                 case OpCode.DEPTH:
                     {
+                        //var a = pool.Dequeue();
+                        //a.Value = ;
                         Push(CurrentContext.EvaluationStack.Count);
                         break;
                     }
@@ -661,7 +671,10 @@ namespace Neo.VM
                     }
                 case OpCode.MEMCPY:
                     {
+                        //var x = ;
                         int count = (int)Pop().GetInteger();
+                        //pool.Enqueue((Integer)x);
+
                         if (count < 0)
                             throw new InvalidOperationException($"The value {count} is out of range.");
                         int si = (int)Pop().GetInteger();
@@ -737,29 +750,33 @@ namespace Neo.VM
                 // Bitwise logic
                 case OpCode.INVERT:
                     {
-                        var x = Pop().GetInteger();
-                        Push(~x);
+                        var x = Pop();
+                        ((Integer)x).Value = ~x.GetInteger();
+                        Push(x);
                         break;
                     }
                 case OpCode.AND:
                     {
                         var x2 = Pop().GetInteger();
-                        var x1 = Pop().GetInteger();
-                        Push(x1 & x2);
+                        var x1 = Pop();
+                        ((Integer)x1).Value = x1.GetInteger() & x2;
+                        Push(x1);
                         break;
                     }
                 case OpCode.OR:
                     {
                         var x2 = Pop().GetInteger();
-                        var x1 = Pop().GetInteger();
-                        Push(x1 | x2);
+                        var x1 = Pop();
+                        ((Integer)x1).Value = x1.GetInteger() | x2;
+                        Push(x1);
                         break;
                     }
                 case OpCode.XOR:
                     {
                         var x2 = Pop().GetInteger();
-                        var x1 = Pop().GetInteger();
-                        Push(x1 ^ x2);
+                        var x1 = Pop();
+                        ((Integer)x1).Value = x1.GetInteger() ^ x2;
+                        Push(x1);
                         break;
                     }
                 case OpCode.EQUAL:
@@ -780,68 +797,80 @@ namespace Neo.VM
                 // Numeric
                 case OpCode.SIGN:
                     {
-                        var x = Pop().GetInteger();
-                        Push(x.Sign);
+                        var x = Pop();
+                        ((Integer)x).Value = x.GetInteger().Sign;
+                        Push(x);
                         break;
                     }
                 case OpCode.ABS:
                     {
-                        var x = Pop().GetInteger();
-                        Push(BigInteger.Abs(x));
+                        var x = Pop();
+                        ((Integer)x).Value = BigInteger.Abs(x.GetInteger());
+                        Push(x);
                         break;
                     }
                 case OpCode.NEGATE:
                     {
-                        var x = Pop().GetInteger();
-                        Push(-x);
+                        var x = Pop();
+                        ((Integer)x).Value = -x.GetInteger();
+                        Push(x);
                         break;
                     }
                 case OpCode.INC:
                     {
-                        var x = Pop().GetInteger();
-                        Push(x + 1);
+                        var x = Pop();
+                        ((Integer)x).Value = x.GetInteger()+1;
+                        Push(x);
                         break;
                     }
                 case OpCode.DEC:
                     {
-                        var x = Pop().GetInteger();
-                        Push(x - 1);
+                        var x = Pop();
+                        ((Integer)x).Value = x.GetInteger() - 1;
+                        Push(x);
                         break;
                     }
                 case OpCode.ADD:
                     {
                         var x2 = Pop().GetInteger();
-                        var x1 = Pop().GetInteger();
-                        Push(x1 + x2);
+                        var x = Pop();
+                        ((Integer)x).Value = x.GetInteger() + x2;
+                        Push(x);
+                        //Push(x1 + x2);
                         break;
                     }
                 case OpCode.SUB:
                     {
                         var x2 = Pop().GetInteger();
-                        var x1 = Pop().GetInteger();
-                        Push(x1 - x2);
+                        var x = Pop();
+                        ((Integer)x).Value = x.GetInteger() -x2;
+                        Push(x);
                         break;
                     }
                 case OpCode.MUL:
                     {
                         var x2 = Pop().GetInteger();
-                        var x1 = Pop().GetInteger();
-                        Push(x1 * x2);
+                        var x = Pop();
+                        ((Integer)x).Value = x.GetInteger() * x2;
+                        Push(x);
                         break;
                     }
                 case OpCode.DIV:
                     {
                         var x2 = Pop().GetInteger();
-                        var x1 = Pop().GetInteger();
-                        if(x1.IsZero) throw new InvalidOperationException($"The value {x2} is out of range.");
-                        Push(x1 / x2);
+                        var x = Pop();
+                        ((Integer)x).Value = x.GetInteger() /x2;
+                        Push(x);
+                        //Push(x1 / x2);
                         break;
                     }
                 case OpCode.MOD:
                     {
                         var x2 = Pop().GetInteger();
-                        var x1 = Pop().GetInteger();
-                        Push(x1 % x2);
+                        var x = Pop();
+                        ((Integer)x).Value = x.GetInteger() % x2;
+                        Push(x);
+                        //Push(x1 % x2);
                         break;
                     }
                 case OpCode.POW:
@@ -871,8 +900,12 @@ namespace Neo.VM
                         int shift = (int)Pop().GetInteger();
                         Limits.AssertShift(shift);
                         if (shift == 0) break;
-                        var x = Pop().GetInteger();
-                        Push(x >> shift);
+                        var x1 = Pop();
+                        ((Integer)x1).Value = x1.GetInteger() >> shift;
+                        Push(x1);
+
+                        //var x = Pop().GetInteger();
+                        //Push(x >> shift);
                         break;
                     }
                 case OpCode.NOT:
@@ -958,15 +991,19 @@ namespace Neo.VM
                 case OpCode.MIN:
                     {
                         var x2 = Pop().GetInteger();
-                        var x1 = Pop().GetInteger();
-                        Push(BigInteger.Min(x1, x2));
+                        var x1 = Pop();
+                        ((Integer)x1).Value = BigInteger.Min(x1.GetInteger(), x2);
+                        Push(x1);
+
+                        //Push();
                         break;
                     }
                 case OpCode.MAX:
                     {
                         var x2 = Pop().GetInteger();
-                        var x1 = Pop().GetInteger();
-                        Push(BigInteger.Max(x1, x2));
+                        var x1 = Pop();
+                        ((Integer)x1).Value = BigInteger.Max(x1.GetInteger(), x2);
+                        Push(x1);
                         break;
                     }
                 case OpCode.WITHIN:

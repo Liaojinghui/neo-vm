@@ -13,23 +13,22 @@ namespace neo.Benchmark.benchmark
 {
     public class BM_BigInteger
     {
-        private readonly BigInteger a = ~2 ^ 32;
-       
+        private readonly BigInteger a = ~2^8;
+        byte[] data = null;
 
-
-        [GlobalSetup]
-        public void Setup()
+        public BM_BigInteger()
         {
-            //stack = CreateOrderedStack(3);
+            data = a.ToByteArray(isUnsigned: false, isBigEndian: false);
         }
 
+       
 
         [Benchmark]
-        public bool BigInteger_LT() => a < 0;
+        public void BigInteger_PadRight() => ScriptBuilder.PadRight(data, 16, a.Sign < 0);
 
 
-        [Benchmark]
-        public bool BigInteger_Sign() => a.Sign < 0;
+        //[Benchmark]
+        //public bool BigInteger_Sign() => a.Sign < 0;
 
     }
 }

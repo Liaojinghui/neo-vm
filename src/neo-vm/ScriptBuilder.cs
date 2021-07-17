@@ -176,7 +176,7 @@ namespace Neo.VM
             return ms.ToArray();
         }
 
-        private static byte[] PadRight(byte[] data, int length, bool negative)
+        public static byte[] PadRight(byte[] data, int length, bool negative)
         {
             if (data.Length >= length) return data;
             byte[] buffer = new byte[length];
