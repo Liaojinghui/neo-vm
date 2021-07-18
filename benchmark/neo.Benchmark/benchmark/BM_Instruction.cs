@@ -8,24 +8,27 @@ using Neo.VM.Types;
 using System.Collections;
 using System.Linq;
 using System.Globalization;
+using BenchmarkDotNet.Jobs;
+using System.Numerics;
+using BenchmarkDotNet.Engines;
+using System.Collections.Generic;
 
 namespace neo.Benchmark.benchmark
 {
-    [MemoryDiagnoser]
-    [ThreadingDiagnoser]
+    [DryJob]
     public class BM_Instruction
     {
-        private readonly bool a = true;
-        private readonly bool b = false;
-         ScriptBuilder script = new();
-         ExecutionEngine engine = new();
+        //private readonly bool a = true;
+        //private readonly bool b = false;
+        //private  ScriptBuilder script = new ScriptBuilder();
+        //private  ExecutionEngine engine = new ExecutionEngine();
 
         /// <summary>
         /// Convert string in Hex format to byte array
         /// </summary>
         /// <param name="value">Hexadecimal string</param>
         ///// <returns>Return byte array</returns>
-        //public byte[] FromHexString( string value)
+        //public byte[] FromHexString(string value)
         //{
         //    if (string.IsNullOrEmpty(value))
         //        return System.Array.Empty<byte>();
@@ -40,31 +43,165 @@ namespace neo.Benchmark.benchmark
 
         //    return result;
         //}
-        public BM_Instruction()
-        {
-            script.Emit(OpCode.PUSH1);
-            script.Emit(OpCode.PUSH1);
-            script.Emit(OpCode.OR);
-            //script.Emit(OpCode.PUSH1);
-            //script.Emit(OpCode.PUSH1);
-            //script.Emit(OpCode.PUSH1);
-            //script.Emit(OpCode.PUSH1);
-            //script.Emit(OpCode.PUSH1);
-            //script.Emit(OpCode.PUSH1);
-            //script.Emit(OpCode.PUSH1);
-            //script.Emit(OpCode.PUSH1);
-            //script.Emit(OpCode.PUSH1);
-            //script.Emit(OpCode.PUSH1);
-            //script.Emit(OpCode.PUSH1);
-            engine.LoadScript(script.ToArray());
-        }
-        [Benchmark]
-        public void Instruction_OR()
-        {
-       
-            //engine.LoadScript(FromHexString("56010c0240014a8b4a8b4a8b4a8b4a8b4a8b4a8b4a8b4a8b4a8b4a8b01f80f8d0c0240008b11c001000460589d604a1f0c0b646573657269616c697a650c14c0ef39cee0e4e925c6c2a06a79e1440dd86fceac41627d5b52455824d149"));
 
-            engine.Execute();
+        //[Params("2020202020")]
+        //public String s;
+
+        //[GlobalSetup]
+        //public void Setup()
+        //{
+        //    engine = new ExecutionEngine();
+        //    script = new ScriptBuilder();
+        //    //    //script.Emit(OpCode.PUSH16);
+        //    //    //script.Emit(OpCode.PUSH16);
+        //    //    //script.Emit(OpCode.PUSH16);
+        //    //    //script.Emit(OpCode.PUSH16);
+        //    //    //script.Emit(OpCode.PUSH16);
+        //    //    //script.Emit(OpCode.PUSH16);
+        //    //    engine.LoadScript(script.ToArray());
+        //    //    //engine.Push(10);
+        //    //    //engine.Push(10);
+        //    //    //engine.Push(10);
+        //    //    //engine.Push(10);
+        //    //    //engine.Push(10);
+        //    //    //engine.Push(10);
+        //}
+
+
+        public IEnumerable<ExecutionEngine> NonPrimitive()
+        {
+            var engine = new ExecutionEngine();
+            var script = new ScriptBuilder();
+            engine.LoadScript(script.ToArray());
+            Integer a = new Integer(10);
+            Integer b = new Integer(10);
+            engine.Push(a);
+            engine.Push(b);
+
+            yield return engine;
+        }
+
+
+        [Benchmark]
+        [ArgumentsSource(nameof(NonPrimitive))]
+        public void Instruction_OR(ExecutionEngine engine)
+        {
+            var aa = engine.Pop().GetInteger();
+            var bb = engine.Pop().GetInteger();
+
+            engine.Push(aa | bb);
+        }
+
+        [Benchmark]
+        [ArgumentsSource(nameof(NonPrimitive))]
+        public void Instruction_OR_Reuse(ExecutionEngine engine)
+        {
+            var aa = engine.Pop().GetInteger();
+            var bb = (Integer)engine.Pop();
+            bb.Value = aa & bb.GetInteger();
+            engine.Push(bb);
+        }
+
+        [Benchmark]
+        [ArgumentsSource(nameof(NonPrimitive))]
+        public void Instruction_AND(ExecutionEngine engine)
+        {
+            var aa = engine.Pop().GetInteger();
+            var bb = engine.Pop().GetInteger();
+
+            engine.Push(aa | bb);
+        }
+
+        [Benchmark]
+        [ArgumentsSource(nameof(NonPrimitive))]
+        public void Instruction_AND_Reuse(ExecutionEngine engine)
+        {
+            var aa = engine.Pop().GetInteger();
+            var bb = (Integer)engine.Pop();
+            bb.Value = aa & bb.GetInteger();
+            engine.Push(bb);
+        }
+
+        [Benchmark]
+        [ArgumentsSource(nameof(NonPrimitive))]
+        public void Instruction_XOR(ExecutionEngine engine)
+        {
+            var aa = engine.Pop().GetInteger();
+            var bb = engine.Pop().GetInteger();
+
+            engine.Push(aa ^ bb);
+        }
+
+        [Benchmark]
+        [ArgumentsSource(nameof(NonPrimitive))]
+        public void Instruction_XOR_Reuse(ExecutionEngine engine)
+        {
+            var aa = engine.Pop().GetInteger();
+            var bb = (Integer)engine.Pop();
+            bb.Value = aa ^ bb.GetInteger();
+            engine.Push(bb);
+        }
+
+        [Benchmark]
+        [ArgumentsSource(nameof(NonPrimitive))]
+        public void Instruction_MIN(ExecutionEngine engine)
+        {
+            var aa = engine.Pop().GetInteger();
+            var bb = engine.Pop().GetInteger();
+
+            engine.Push(BigInteger.Min(aa, bb));
+        }
+
+        [Benchmark]
+        [ArgumentsSource(nameof(NonPrimitive))]
+        public void Instruction_MIN_Reuse(ExecutionEngine engine)
+        {
+            var aa = engine.Pop().GetInteger();
+            var bb = (Integer)engine.Pop();
+            bb.Value = BigInteger.Min(aa, bb.GetInteger());
+            engine.Push(bb);
+        }
+
+        [Benchmark]
+        [ArgumentsSource(nameof(NonPrimitive))]
+        public void Instruction_MAX(ExecutionEngine engine)
+        {
+            var aa = engine.Pop().GetInteger();
+            var bb = engine.Pop().GetInteger();
+            engine.Push(BigInteger.Max(aa, bb));
+        }
+
+        [Benchmark]
+        [ArgumentsSource(nameof(NonPrimitive))]
+        public void Instruction_MAX_Reuse(ExecutionEngine engine)
+        {
+
+            var aa = engine.Pop().GetInteger();
+            var bb = (Integer)engine.Pop();
+            bb.Value = BigInteger.Max(aa, bb.GetInteger());
+            engine.Push(bb);
+        }
+
+        [Benchmark]
+        [ArgumentsSource(nameof(NonPrimitive))]
+        public void Instruction_POW(ExecutionEngine engine)
+        {
+            var aa = (int)engine.Pop().GetInteger();
+            engine.Limits.AssertShift(aa);
+            var bb = engine.Pop().GetInteger();
+
+            engine.Push(BigInteger.Pow(bb, aa));
+        }
+
+        [Benchmark]
+        [ArgumentsSource(nameof(NonPrimitive))]
+        public void Instruction_POW_Reuse(ExecutionEngine engine)
+        {
+            var aa = (int)engine.Pop().GetInteger();
+            engine.Limits.AssertShift(aa);
+            var bb = (Integer)engine.Pop();
+            bb.Value = BigInteger.Pow(bb.GetInteger(), aa);
+            engine.Push(bb);
         }
 
         //[Benchmark]

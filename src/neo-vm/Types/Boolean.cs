@@ -14,11 +14,17 @@ namespace Neo.VM.Types
         private static readonly ReadOnlyMemory<byte> TRUE = new byte[] { 1 };
         private static readonly ReadOnlyMemory<byte> FALSE = new byte[] { 0 };
 
-        private readonly bool value;
+        private bool value;
 
         internal override ReadOnlyMemory<byte> Memory => value ? TRUE : FALSE;
         public override int Size => sizeof(bool);
         public override StackItemType Type => StackItemType.Boolean;
+
+        public bool Value
+        {
+            get { return this.value; }   // get method
+            set { this.value = value; }  // set method
+        }
 
         /// <summary>
         /// Create a new VM object representing the boolean type.

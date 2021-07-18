@@ -765,9 +765,13 @@ namespace Neo.VM
                     }
                 case OpCode.OR:
                     {
+                        //var x2 = Pop().GetInteger();
+                        //var x1 = Pop().GetInteger();
+                        ////x1.Value = x1.GetInteger() | x2;
+                        //Push(x1|x2);
                         var x2 = Pop().GetInteger();
-                        var x1 = Pop();
-                        ((Integer)x1).Value = x1.GetInteger() | x2;
+                        var x1 = (Integer)Pop();
+                        x1.Value = x1.GetInteger() | x2;
                         Push(x1);
                         break;
                     }
