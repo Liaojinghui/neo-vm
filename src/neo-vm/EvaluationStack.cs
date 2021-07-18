@@ -77,7 +77,7 @@ namespace Neo.VM
         /// <param name="index">The index of the object from the top of the stack.</param>
         /// <returns>The item at the specified index.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public StackItem Peek(int index = 0)
+        public StackItem Peek(int index)
         {
             if (index >= innerList.Count) throw new InvalidOperationException($"Peek out of bounds: {index}/{innerList.Count}");
             if (index < 0)
@@ -87,6 +87,13 @@ namespace Neo.VM
             }
             return innerList[innerList.Count - index - 1];
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public StackItem Peek()
+        {
+            return innerList[innerList.Count - 1];
+        }
+
 
         StackItem IReadOnlyList<StackItem>.this[int index] => Peek(index);
 
@@ -135,12 +142,12 @@ namespace Neo.VM
         {
             if (index >= innerList.Count)
                 throw new ArgumentOutOfRangeException(nameof(index));
-            //if (index < 0)
-            //{
-            //    index += innerList.Count;
-            //    if (index < 0)
-            //        throw new ArgumentOutOfRangeException(nameof(index));
-            //}
+            if (index < 0)
+            {
+                index += innerList.Count;
+                if (index < 0)
+                    throw new ArgumentOutOfRangeException(nameof(index));
+            }
             index = innerList.Count - index - 1;
             if (innerList[index] is not T item)
                 throw new InvalidCastException($"The item can't be casted to type {typeof(T)}");

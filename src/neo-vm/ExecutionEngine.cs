@@ -1589,9 +1589,15 @@ namespace Neo.VM
         /// <param name="index">The index of the object from the top of the stack.</param>
         /// <returns>The item at the specified index.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public StackItem Peek(int index = 0)
+        public StackItem Peek(int index)
         {
             return CurrentContext!.EvaluationStack.Peek(index);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public StackItem Peek()
+        {
+            return CurrentContext!.EvaluationStack.Peek();
         }
 
         /// <summary>

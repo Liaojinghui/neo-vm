@@ -12,16 +12,16 @@ using BenchmarkDotNet.Jobs;
 using System.Numerics;
 using BenchmarkDotNet.Engines;
 using System.Collections.Generic;
-
+using Neo.VM.ObjectPool;
 namespace neo.Benchmark.benchmark
 {
-    [DryJob]
+     [DryJob]
     public class BM_Instruction
     {
         //private readonly bool a = true;
         //private readonly bool b = false;
-        //private  ScriptBuilder script = new ScriptBuilder();
-        //private  ExecutionEngine engine = new ExecutionEngine();
+        private  ScriptBuilder script = new ScriptBuilder();
+        private ExecutionEngine engine = new ExecutionEngine();
 
         /// <summary>
         /// Convert string in Hex format to byte array
@@ -70,8 +70,8 @@ namespace neo.Benchmark.benchmark
 
         public IEnumerable<ExecutionEngine> NonPrimitive()
         {
-            var engine = new ExecutionEngine();
-            var script = new ScriptBuilder();
+             engine = new ExecutionEngine();
+             script = new ScriptBuilder();
             engine.LoadScript(script.ToArray());
             Integer a = new Integer(10);
             Integer b = new Integer(10);
@@ -81,128 +81,164 @@ namespace neo.Benchmark.benchmark
             yield return engine;
         }
 
+        public IEnumerable<object[]> IntegerPool()
+        {
+            var pool = new ObjectPool<Integer>(() => new Integer(0));
+            pool.Allocate(10);
+
+            engine = new ExecutionEngine();
+            script = new ScriptBuilder();
+            engine.LoadScript(script.ToArray());
+            Integer a = new Integer(10);
+            Integer b = new Integer(10);
+            engine.Push(a);
+            engine.Push(b);
+
+            yield return new object[]{engine, pool};
+
+        }
+
+
+        //[Benchmark]
+        //[ArgumentsSource(nameof(NonPrimitive))]
+        //public void Instruction_OR(ExecutionEngine engine)
+        //{
+        //    var a = engine.Pop().GetInteger();
+        //    var b = engine.Pop().GetInteger();
+
+        //    engine.Push(a | b);
+        //}
+
+        //[Benchmark]
+        //[ArgumentsSource(nameof(NonPrimitive))]
+        //public void Instruction_OR_Reuse(ExecutionEngine engine)
+        //{
+        //    var a = engine.Pop().GetInteger();
+        //    var b = (Integer)engine.Pop();
+        //    b.Value = a | b.GetInteger();
+        //    engine.Push(b);
+        //}
+
+        //[Benchmark]
+        //[ArgumentsSource(nameof(NonPrimitive))]
+        //public void Instruction_AND(ExecutionEngine engine)
+        //{
+        //    var a = engine.Pop().GetInteger();
+        //    var b = engine.Pop().GetInteger();
+
+        //    engine.Push(a & b);
+        //}
+
+        //[Benchmark]
+        //[ArgumentsSource(nameof(NonPrimitive))]
+        //public void Instruction_AND_Reuse(ExecutionEngine engine)
+        //{
+        //    var a = engine.Pop().GetInteger();
+        //    var b = (Integer)engine.Pop();
+        //    b.Value = a & b.GetInteger();
+        //    engine.Push(b);
+        //}
+
+        //[Benchmark]
+        //[ArgumentsSource(nameof(NonPrimitive))]
+        //public void Instruction_XOR(ExecutionEngine engine)
+        //{
+        //    var a = engine.Pop().GetInteger();
+        //    var b = engine.Pop().GetInteger();
+
+        //    engine.Push(a ^ b);
+        //}
+
+        //[Benchmark]
+        //[ArgumentsSource(nameof(NonPrimitive))]
+        //public void Instruction_XOR_Reuse(ExecutionEngine engine)
+        //{
+        //    var a = engine.Pop().GetInteger();
+        //    var b = (Integer)engine.Pop();
+        //    b.Value = a ^ b.GetInteger();
+        //    engine.Push(b);
+        //}
+
+        //[Benchmark]
+        //[ArgumentsSource(nameof(NonPrimitive))]
+        //public void Instruction_MIN(ExecutionEngine engine)
+        //{
+        //    var a = engine.Pop().GetInteger();
+        //    var b = engine.Pop().GetInteger();
+
+        //    engine.Push(BigInteger.Min(a, b));
+        //}
+
+        //[Benchmark]
+        //[ArgumentsSource(nameof(NonPrimitive))]
+        //public void Instruction_MIN_Reuse(ExecutionEngine engine)
+        //{
+        //    var a = engine.Pop().GetInteger();
+        //    var b = (Integer)engine.Pop();
+        //    b.Value = BigInteger.Min(a, b.GetInteger());
+        //    engine.Push(b);
+        //}
+
+        //[Benchmark]
+        //[ArgumentsSource(nameof(NonPrimitive))]
+        //public void Instruction_MAX(ExecutionEngine engine)
+        //{
+        //    var a = engine.Pop().GetInteger();
+        //    var b = engine.Pop().GetInteger();
+        //    engine.Push(BigInteger.Max(a, b));
+        //}
+
+        //[Benchmark]
+        //[ArgumentsSource(nameof(NonPrimitive))]
+        //public void Instruction_MAX_Reuse(ExecutionEngine engine)
+        //{
+
+        //    var a = engine.Pop().GetInteger();
+        //    var b = (Integer)engine.Pop();
+        //    b.Value = BigInteger.Max(a, b.GetInteger());
+        //    engine.Push(b);
+        //}
+
+        //[Benchmark]
+        //[ArgumentsSource(nameof(NonPrimitive))]
+        //public void Instruction_POW(ExecutionEngine engine)
+        //{
+        //    var a = (int)engine.Pop().GetInteger();
+        //    engine.Limits.AssertShift(a);
+        //    var b = engine.Pop().GetInteger();
+
+        //    engine.Push(BigInteger.Pow(b, a));
+        //}
+
+        //[Benchmark]
+        //[ArgumentsSource(nameof(NonPrimitive))]
+        //public void Instruction_POW_Reuse(ExecutionEngine engine)
+        //{
+        //    var a = (int)engine.Pop().GetInteger();
+        //    engine.Limits.AssertShift(a);
+        //    var b = (Integer)engine.Pop();
+        //    b.Value = BigInteger.Pow(b.GetInteger(), a);
+        //    engine.Push(b);
+        //}
 
         [Benchmark]
-        [ArgumentsSource(nameof(NonPrimitive))]
-        public void Instruction_OR(ExecutionEngine engine)
+        [ArgumentsSource(nameof(IntegerPool))]
+        public void Instruction_PUSH_Int(ExecutionEngine engine, ObjectPool<Integer> pool)
         {
-            var aa = engine.Pop().GetInteger();
-            var bb = engine.Pop().GetInteger();
-
-            engine.Push(aa | bb);
+            engine.Push(1000);
         }
 
         [Benchmark]
-        [ArgumentsSource(nameof(NonPrimitive))]
-        public void Instruction_OR_Reuse(ExecutionEngine engine)
+        [ArgumentsSource(nameof(IntegerPool))]
+        public void Instruction_PUSH_Int_Pool(ExecutionEngine engine, ObjectPool<Integer> pool)
         {
-            var aa = engine.Pop().GetInteger();
-            var bb = (Integer)engine.Pop();
-            bb.Value = aa & bb.GetInteger();
-            engine.Push(bb);
+            var a = pool.Dequeue();
+            a.Value = 1000;
+            engine.Push(a);
         }
 
-        [Benchmark]
-        [ArgumentsSource(nameof(NonPrimitive))]
-        public void Instruction_AND(ExecutionEngine engine)
-        {
-            var aa = engine.Pop().GetInteger();
-            var bb = engine.Pop().GetInteger();
 
-            engine.Push(aa | bb);
-        }
 
-        [Benchmark]
-        [ArgumentsSource(nameof(NonPrimitive))]
-        public void Instruction_AND_Reuse(ExecutionEngine engine)
-        {
-            var aa = engine.Pop().GetInteger();
-            var bb = (Integer)engine.Pop();
-            bb.Value = aa & bb.GetInteger();
-            engine.Push(bb);
-        }
-
-        [Benchmark]
-        [ArgumentsSource(nameof(NonPrimitive))]
-        public void Instruction_XOR(ExecutionEngine engine)
-        {
-            var aa = engine.Pop().GetInteger();
-            var bb = engine.Pop().GetInteger();
-
-            engine.Push(aa ^ bb);
-        }
-
-        [Benchmark]
-        [ArgumentsSource(nameof(NonPrimitive))]
-        public void Instruction_XOR_Reuse(ExecutionEngine engine)
-        {
-            var aa = engine.Pop().GetInteger();
-            var bb = (Integer)engine.Pop();
-            bb.Value = aa ^ bb.GetInteger();
-            engine.Push(bb);
-        }
-
-        [Benchmark]
-        [ArgumentsSource(nameof(NonPrimitive))]
-        public void Instruction_MIN(ExecutionEngine engine)
-        {
-            var aa = engine.Pop().GetInteger();
-            var bb = engine.Pop().GetInteger();
-
-            engine.Push(BigInteger.Min(aa, bb));
-        }
-
-        [Benchmark]
-        [ArgumentsSource(nameof(NonPrimitive))]
-        public void Instruction_MIN_Reuse(ExecutionEngine engine)
-        {
-            var aa = engine.Pop().GetInteger();
-            var bb = (Integer)engine.Pop();
-            bb.Value = BigInteger.Min(aa, bb.GetInteger());
-            engine.Push(bb);
-        }
-
-        [Benchmark]
-        [ArgumentsSource(nameof(NonPrimitive))]
-        public void Instruction_MAX(ExecutionEngine engine)
-        {
-            var aa = engine.Pop().GetInteger();
-            var bb = engine.Pop().GetInteger();
-            engine.Push(BigInteger.Max(aa, bb));
-        }
-
-        [Benchmark]
-        [ArgumentsSource(nameof(NonPrimitive))]
-        public void Instruction_MAX_Reuse(ExecutionEngine engine)
-        {
-
-            var aa = engine.Pop().GetInteger();
-            var bb = (Integer)engine.Pop();
-            bb.Value = BigInteger.Max(aa, bb.GetInteger());
-            engine.Push(bb);
-        }
-
-        [Benchmark]
-        [ArgumentsSource(nameof(NonPrimitive))]
-        public void Instruction_POW(ExecutionEngine engine)
-        {
-            var aa = (int)engine.Pop().GetInteger();
-            engine.Limits.AssertShift(aa);
-            var bb = engine.Pop().GetInteger();
-
-            engine.Push(BigInteger.Pow(bb, aa));
-        }
-
-        [Benchmark]
-        [ArgumentsSource(nameof(NonPrimitive))]
-        public void Instruction_POW_Reuse(ExecutionEngine engine)
-        {
-            var aa = (int)engine.Pop().GetInteger();
-            engine.Limits.AssertShift(aa);
-            var bb = (Integer)engine.Pop();
-            bb.Value = BigInteger.Pow(bb.GetInteger(), aa);
-            engine.Push(bb);
-        }
 
         //[Benchmark]
         //public bool Instruction_BOOLAND() => a && b;
