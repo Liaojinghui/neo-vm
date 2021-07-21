@@ -15,12 +15,13 @@ using System.Collections.Generic;
 using Neo.VM.ObjectPool;
 namespace neo.Benchmark.benchmark
 {
-     [DryJob]
+    [DryJob]
+    [MemoryDiagnoser]
     public class BM_Instruction
     {
         //private readonly bool a = true;
         //private readonly bool b = false;
-        private  ScriptBuilder script = new ScriptBuilder();
+        private ScriptBuilder script = new ScriptBuilder();
         private ExecutionEngine engine = new ExecutionEngine();
 
         /// <summary>
@@ -70,54 +71,63 @@ namespace neo.Benchmark.benchmark
 
         public IEnumerable<ExecutionEngine> NonPrimitive()
         {
-             engine = new ExecutionEngine();
-             script = new ScriptBuilder();
+            engine = new ExecutionEngine();
+            script = new ScriptBuilder();
             engine.LoadScript(script.ToArray());
             Integer a = new Integer(10);
             Integer b = new Integer(10);
+            _=PoolManager.Instance;
             engine.Push(a);
             engine.Push(b);
 
             yield return engine;
         }
 
-        public IEnumerable<object[]> IntegerPool()
+        //public IEnumerable<object[]> IntegerPool()
+        //{
+
+        //    engine = new ExecutionEngine();
+        //    script = new ScriptBuilder();
+        //    engine.LoadScript(script.ToArray());
+        //    Integer a = new Integer(10);
+        //    Integer b = new Integer(10);
+        //    engine.Push(a);
+        //    engine.Push(b);
+
+        //    yield return new object[] { engine};
+
+        //}
+
+
+        [Benchmark]
+        [ArgumentsSource(nameof(NonPrimitive))]
+        public void Instruction_OR(ExecutionEngine engine)
         {
-            var pool = new ObjectPool<Integer>(() => new Integer(0));
-            pool.Allocate(10);
+            for(int i = 0; i<1000000; i++) {
 
-            engine = new ExecutionEngine();
-            script = new ScriptBuilder();
-            engine.LoadScript(script.ToArray());
-            Integer a = new Integer(10);
-            Integer b = new Integer(10);
-            engine.Push(a);
-            engine.Push(b);
+                engine.Push(i ^ 20);
+                var a = engine.Pop();
+                var b = engine.Pop();
 
-            yield return new object[]{engine, pool};
-
+                engine.Push(a.GetInteger() | b.GetInteger());
+            }
         }
 
-
-        //[Benchmark]
-        //[ArgumentsSource(nameof(NonPrimitive))]
-        //public void Instruction_OR(ExecutionEngine engine)
-        //{
-        //    var a = engine.Pop().GetInteger();
-        //    var b = engine.Pop().GetInteger();
-
-        //    engine.Push(a | b);
-        //}
-
-        //[Benchmark]
-        //[ArgumentsSource(nameof(NonPrimitive))]
-        //public void Instruction_OR_Reuse(ExecutionEngine engine)
-        //{
-        //    var a = engine.Pop().GetInteger();
-        //    var b = (Integer)engine.Pop();
-        //    b.Value = a | b.GetInteger();
-        //    engine.Push(b);
-        //}
+        [Benchmark]
+        [ArgumentsSource(nameof(NonPrimitive))]
+        public void Instruction_OR_Pool(ExecutionEngine engine)
+        {
+            for (int i = 0; i < 1000000; i++)
+            {
+                //engine.Push(PoolManager.Instance.Reuse(i));
+                engine.Push(PoolManager.Instance.Reuse(i^20));
+                var a = engine.Pop();
+                var b = engine.Pop();
+                PoolManager.Instance.Collect(a);
+                PoolManager.Instance.Collect(b);
+                engine.Push(PoolManager.Instance.Reuse(a.GetInteger() | b.GetInteger()));
+            }
+        }
 
         //[Benchmark]
         //[ArgumentsSource(nameof(NonPrimitive))]
@@ -221,21 +231,21 @@ namespace neo.Benchmark.benchmark
         //    engine.Push(b);
         //}
 
-        [Benchmark]
-        [ArgumentsSource(nameof(IntegerPool))]
-        public void Instruction_PUSH_Int(ExecutionEngine engine, ObjectPool<Integer> pool)
-        {
-            engine.Push(1000);
-        }
+        //[Benchmark]
+        //[ArgumentsSource(nameof(IntegerPool))]
+        //public void Instruction_PUSH_Int(ExecutionEngine engine, ObjectPool<Integer> pool)
+        //{
+        //    engine.Push(1000);
+        //}
 
-        [Benchmark]
-        [ArgumentsSource(nameof(IntegerPool))]
-        public void Instruction_PUSH_Int_Pool(ExecutionEngine engine, ObjectPool<Integer> pool)
-        {
-            var a = pool.Dequeue();
-            a.Value = 1000;
-            engine.Push(a);
-        }
+        //[Benchmark]
+        //[ArgumentsSource(nameof(IntegerPool))]
+        //public void Instruction_PUSH_Int_Pool(ExecutionEngine engine, ObjectPool<Integer> pool)
+        //{
+        //    var a = pool.Dequeue();
+        //    a.Value = 1000;
+        //    engine.Push(a);
+        //}
 
 
 

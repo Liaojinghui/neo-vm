@@ -13,7 +13,7 @@ namespace neo.Benchmark.benchmark
 {
     public class BM_BigInteger
     {
-        private readonly BigInteger a = ~2^8;
+        private readonly BigInteger a = ~2 ^ 8;
         byte[] data = null;
 
         public BM_BigInteger()
@@ -21,7 +21,7 @@ namespace neo.Benchmark.benchmark
             data = a.ToByteArray(isUnsigned: false, isBigEndian: false);
         }
 
-       
+
 
         [Benchmark]
         public void BigInteger_PadRight() => ScriptBuilder.PadRight(data, 16, a.Sign < 0);

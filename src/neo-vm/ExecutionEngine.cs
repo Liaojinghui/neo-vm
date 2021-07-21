@@ -823,7 +823,7 @@ namespace Neo.VM
                 case OpCode.INC:
                     {
                         var x = Pop();
-                        ((Integer)x).Value = x.GetInteger()+1;
+                        ((Integer)x).Value = x.GetInteger() + 1;
                         Push(x);
                         break;
                     }
@@ -847,7 +847,7 @@ namespace Neo.VM
                     {
                         var x2 = Pop().GetInteger();
                         var x = Pop();
-                        ((Integer)x).Value = x.GetInteger() -x2;
+                        ((Integer)x).Value = x.GetInteger() - x2;
                         Push(x);
                         break;
                     }
@@ -863,7 +863,7 @@ namespace Neo.VM
                     {
                         var x2 = Pop().GetInteger();
                         var x = Pop();
-                        ((Integer)x).Value = x.GetInteger() /x2;
+                        ((Integer)x).Value = x.GetInteger() / x2;
                         Push(x);
                         //Push(x1 / x2);
                         break;

@@ -193,7 +193,7 @@ namespace Neo.Test
         {
             var a = true;
             var b = true;
-            Assert.AreEqual(a& b, a && b);
+            Assert.AreEqual(a & b, a && b);
             Assert.AreEqual(a | b, a || b);
         }
     }

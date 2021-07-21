@@ -10,7 +10,7 @@ namespace neo.Benchmark
     {
         public static void Main(string[] args)
         {
-           var summar = BenchmarkRunner.Run<BM_Instruction>();
+            var summar = BenchmarkRunner.Run<BM_Instruction>();
             //BenchmarkRunner.Run<BM_BigInteger>();
         }
     }

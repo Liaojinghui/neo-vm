@@ -20,7 +20,7 @@ namespace neo.Benchmark.benchmark
         public BM_EvaluationStack()
         {
             //stack = new EvaluationStack(new ReferenceCounter());
-            
+
         }
 
 
@@ -30,8 +30,8 @@ namespace neo.Benchmark.benchmark
         [Benchmark]
         public void Stack_Pop()
         {
-             //List<StackItem> innerList = new();
-        StackItem s = (int)1;
+            //List<StackItem> innerList = new();
+            StackItem s = (int)1;
             stack.Push(s);
             ////stack.Pop();
         }
