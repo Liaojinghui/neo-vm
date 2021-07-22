@@ -1,3 +1,5 @@
+using System;
+using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
 
@@ -6,6 +8,23 @@ namespace Neo.Test
     [TestClass]
     public class UtDebugger
     {
+
+        public byte[] FromHexString(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return System.Array.Empty<byte>();
+            if (value.StartsWith("0x"))
+                value = value[2..];
+            if (value.Length % 2 == 1)
+                throw new FormatException();
+
+            var result = new byte[value.Length / 2];
+            for (var i = 0; i < result.Length; i++)
+                result[i] = byte.Parse(value.Substring(i * 2, 2), NumberStyles.AllowHexSpecifier);
+
+            return result;
+        }
+
         [TestMethod]
         public void TestBreakPoint()
         {
@@ -205,6 +224,14 @@ namespace Neo.Test
 
             Assert.AreEqual(true, engine.ResultStack.Pop().GetBoolean());
             Assert.AreEqual(VMState.HALT, engine.State);
+        }
+
+        [TestMethod]
+        public void TestSlow()
+        {
+           var engine = new ExecutionEngine();
+           engine.LoadScript(FromHexString("56010c0240014a8b4a8b4a8b4a8b4a8b4a8b4a8b4a8b4a8b4a8b4a8b01f80f8d0c0240008b11c001000460589d604a1f0c0b646573657269616c697a650c14c0ef39cee0e4e925c6c2a06a79e1440dd86fceac41627d5b52455824d149"));
+
         }
     }
 }
