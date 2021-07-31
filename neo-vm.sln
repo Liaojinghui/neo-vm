@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{210DA31B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "neo-vm.Tests", "tests\neo-vm.Tests\neo-vm.Tests.csproj", "{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "neo-core", "..\..\source\repos\neo-core\neo-core\neo-core.csproj", "{787F4204-82F1-41C5-A86B-43404278DF8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +26,10 @@ Global
 		{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{787F4204-82F1-41C5-A86B-43404278DF8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{787F4204-82F1-41C5-A86B-43404278DF8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{787F4204-82F1-41C5-A86B-43404278DF8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{787F4204-82F1-41C5-A86B-43404278DF8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

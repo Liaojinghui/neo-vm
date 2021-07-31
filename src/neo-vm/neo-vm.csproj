@@ -21,4 +21,8 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\source\repos\neo-core\neo-core\neo-core.csproj" />
+  </ItemGroup>
+
 </Project>

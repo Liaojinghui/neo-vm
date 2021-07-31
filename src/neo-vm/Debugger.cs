@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-
+using Neo.VM;
 namespace Neo.VM
 {
     /// <summary>
